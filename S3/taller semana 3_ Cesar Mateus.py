@@ -44,7 +44,7 @@ def calculadora(num1: float, num2: float, op: str)-> float:
         else:
             raise ZeroDivisionError("Error: No es posible dividir por 0")
     raise ValueError(f"Operador '{op}' no es válido.")
-
+### Función para obtener la fecha actual, pero solo si el usuario tiene rol de administrador, de lo contrario lanza un error de permiso.
 def obtener_fecha(rol: str)-> str:
     """Retorna la fecha si el rol es administrador, de lo contrario retorna un mensaje de acceso denegado."""
     if rol == "Administrador":
@@ -53,7 +53,7 @@ def obtener_fecha(rol: str)-> str:
         return (f"La fecha de hoy es: {formato_fecha}\n\n")
     else:
         raise PermissionError("Acceso denegado. Solo los administradores pueden ver la fecha.")
-    
+### Función para validar la contraseña actual y actualizar a una nueva contraseña si se cumplen los criterios de seguridad, como longitud mínima, no ser igual a la contraseña actual o al nombre de usuario.
 def validar_pass(pass_actual: str, nueva_pass: str, pass_sesion: str, usuario_sesion: str)-> str:
     """Valida la contraseña actual y actualiza a una nueva contraseña si se cumplen los criterios de seguridad."""
     if pass_sesion != pass_actual:
@@ -67,7 +67,7 @@ def validar_pass(pass_actual: str, nueva_pass: str, pass_sesion: str, usuario_se
         raise ValueError("La contraseña no puede ser igual al nombre de usuario.")
        
     return nueva_pass
-
+### Función para contar el número de vocales, consonantes y letras totales en una palabra dada, utilizando comprensión de listas para contar las vocales y restando el total de letras para obtener el número de consonantes.
 def contar(palabra: str)-> Dict[str, int]:
     """Cuenta el número de vocales, consonantes y letras totales en una palabra dada."""
     tot_letras = len(palabra)
@@ -130,7 +130,7 @@ while error_sesion <3 and sistema_activo:
                         mensaje = f"{rol}, ha solicitado la fecha de hoy {resultado_fecha}."
                     else:
                         mensaje = f"{rol}, ha solicitado la fecha de hoy sin tener los privilegios necesarios."
-                ### El comando "validar_pass" permite a los usuarios cambiar su contraseña, despues de confirmar la contraseña actual correctamente y deben cumplir con ciertos criterios para la nueva contraseña.
+                ### El comando "validar_pass" permite a los usuarios cambiar su contraseña actual por una nueva contraseña, pero solo si ingresan correctamente su contraseña actual y cumplen con los criterios de seguridad para la nueva contraseña. Si el usuario no tiene los privilegios necesarios o ingresa una contraseña incorrecta, se muestra un mensaje de error.
                 elif cmd == "validar_pass":
                     if rol == "Invitado":
                         user_sesion = usuario_inv
@@ -152,8 +152,7 @@ while error_sesion <3 and sistema_activo:
                         print ("Contraseña actualizada exitosamente.")
                         mensaje = f"{rol}, ha solicitado validar pass."
                 elif cmd == "calculadora":
-                    ### Se solicita al usuario ingresar dos numeros y un operador para que el sistema realice la operación correspondiente, manejando casos de división por cero.
-                    num_1= float(input("Ingrese primer número: "))
+                    ### El comando "calculadora" permite a los usuarios realizar operaciones matemáticas básicas entre dos números
                     op= input("Ingresa el operador (+, -, *, /): ")
                     num_2= float(input("Ingrese segundo número: "))              
                     resultado_calculadora= calculadora(num_1, num_2, op)
@@ -170,7 +169,7 @@ while error_sesion <3 and sistema_activo:
                     mensaje = f"{rol}, ha solicitado {cmd}."
                 else:
                     print("--- Comando desconocido. Intente de nuevo\n\n")
-            
+                ### Cada vez que el usuario ingresa un comando, se registra un log en el historial con la marca de tiempo, el rol del usuario, el comando ingresado y una descripción detallada de la acción realizada.
                 d_log = {"Timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
                         "Usuario": rol, 
                         "Comando": cmd, 
@@ -178,6 +177,7 @@ while error_sesion <3 and sistema_activo:
                 historial_chat.append(d_log)
                 print (historial_chat)
             
+            ### Manejo de excepciones para capturar errores de seguridad, matemáticos, datos inválidos y otros errores inesperados, mostrando mensajes de error específicos para cada caso.
             except PermissionError as e:
                 print(f"Error de seguridad: {e}")
             except ZeroDivisionError as e:
